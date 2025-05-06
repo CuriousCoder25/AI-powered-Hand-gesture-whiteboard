@@ -27,10 +27,23 @@
       z-index: 10;
       font-family: sans-serif;
     }
+    #eraserBtn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ffffffdd;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 16px;
+      cursor: pointer;
+      z-index: 10;
+    }
   </style>
 </head>
 <body>
   <div id="info">✍️ Draw with your index finger</div>
+  <button id="eraserBtn">Eraser</button>
   <video id="input_video" autoplay playsinline></video>
   <canvas id="whiteboard"></canvas>
 
@@ -42,6 +55,7 @@
     const video = document.getElementById('input_video');
     const canvas = document.getElementById('whiteboard');
     const ctx = canvas.getContext('2d');
+    const eraserBtn = document.getElementById('eraserBtn');
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -53,7 +67,13 @@
     let drawing = false;
     let prevX = 0, prevY = 0;
     let smoothX = 0, smoothY = 0;
-    const SMOOTHING = 0.2; // Adjust this between 0 (none) and 1 (full lag)
+    const SMOOTHING = 0.2;
+    let isErasing = false;
+
+    eraserBtn.addEventListener('click', () => {
+      isErasing = !isErasing;
+      eraserBtn.textContent = isErasing ? 'Draw' : 'Eraser';
+    });
 
     const hands = new Hands({
       locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
@@ -67,14 +87,13 @@
     });
 
     hands.onResults((results) => {
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = '#000';
+      ctx.lineWidth = isErasing ? 20 : 4;
+      ctx.strokeStyle = isErasing ? '#ffffff' : '#000000';
       ctx.lineCap = 'round';
 
       if (results.multiHandLandmarks.length > 0) {
         const index = results.multiHandLandmarks[0][8];
-        let targetX = (1 - index.x) * canvas.width;
-
+        let targetX = (1 - index.x) * canvas.width; // flip X
         let targetY = index.y * canvas.height;
 
         // Apply smoothing
