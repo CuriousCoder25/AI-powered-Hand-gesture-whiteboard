@@ -30,7 +30,7 @@
   </style>
 </head>
 <body>
-  <div id="info">✍️ Pinch index and thumb to draw</div>
+  <div id="info">✍️ Draw with your index finger</div>
   <video id="input_video" autoplay playsinline></video>
   <canvas id="whiteboard"></canvas>
 
@@ -38,7 +38,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
 
-  <!-- Script -->
   <script>
     const video = document.getElementById('input_video');
     const canvas = document.getElementById('whiteboard');
@@ -53,6 +52,8 @@
 
     let drawing = false;
     let prevX = 0, prevY = 0;
+    let smoothX = 0, smoothY = 0;
+    const SMOOTHING = 0.2; // Adjust this between 0 (none) and 1 (full lag)
 
     const hands = new Hands({
       locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
@@ -71,33 +72,28 @@
       ctx.lineCap = 'round';
 
       if (results.multiHandLandmarks.length > 0) {
-        const landmarks = results.multiHandLandmarks[0];
-        const index = landmarks[8];
-        const thumb = landmarks[4];
+        const index = results.multiHandLandmarks[0][8];
+        let targetX = (1 - index.x) * canvas.width;
 
-        const x = index.x * canvas.width;
-        const y = index.y * canvas.height;
+        let targetY = index.y * canvas.height;
 
-        const dx = (index.x - thumb.x) * canvas.width;
-        const dy = (index.y - thumb.y) * canvas.height;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+        // Apply smoothing
+        smoothX = smoothX * (1 - SMOOTHING) + targetX * SMOOTHING;
+        smoothY = smoothY * (1 - SMOOTHING) + targetY * SMOOTHING;
 
-        if (distance < 40) {
-          // Start or continue drawing
-          if (!drawing) {
-            drawing = true;
-            prevX = x;
-            prevY = y;
-          }
-          ctx.beginPath();
-          ctx.moveTo(prevX, prevY);
-          ctx.lineTo(x, y);
-          ctx.stroke();
-          prevX = x;
-          prevY = y;
-        } else {
-          drawing = false;
+        if (!drawing) {
+          drawing = true;
+          prevX = smoothX;
+          prevY = smoothY;
         }
+
+        ctx.beginPath();
+        ctx.moveTo(prevX, prevY);
+        ctx.lineTo(smoothX, smoothY);
+        ctx.stroke();
+
+        prevX = smoothX;
+        prevY = smoothY;
       } else {
         drawing = false;
       }
