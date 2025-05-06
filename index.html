@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MediaPipe Whiteboard</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    #whiteboard {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    #input_video {
+      display: none;
+    }
+    #info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(255,255,255,0.8);
+      padding: 10px;
+      border-radius: 8px;
+      z-index: 10;
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div id="info">✍️ Pinch index and thumb to draw</div>
+  <video id="input_video" autoplay playsinline></video>
+  <canvas id="whiteboard"></canvas>
+
+  <!-- MediaPipe and Camera Utils -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+  <!-- Script -->
+  <script>
+    const video = document.getElementById('input_video');
+    const canvas = document.getElementById('whiteboard');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    let drawing = false;
+    let prevX = 0, prevY = 0;
+
+    const hands = new Hands({
+      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+    });
+
+    hands.setOptions({
+      maxNumHands: 1,
+      modelComplexity: 1,
+      minDetectionConfidence: 0.7,
+      minTrackingConfidence: 0.5
+    });
+
+    hands.onResults((results) => {
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = '#000';
+      ctx.lineCap = 'round';
+
+      if (results.multiHandLandmarks.length > 0) {
+        const landmarks = results.multiHandLandmarks[0];
+        const index = landmarks[8];
+        const thumb = landmarks[4];
+
+        const x = index.x * canvas.width;
+        const y = index.y * canvas.height;
+
+        const dx = (index.x - thumb.x) * canvas.width;
+        const dy = (index.y - thumb.y) * canvas.height;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < 40) {
+          // Start or continue drawing
+          if (!drawing) {
+            drawing = true;
+            prevX = x;
+            prevY = y;
+          }
+          ctx.beginPath();
+          ctx.moveTo(prevX, prevY);
+          ctx.lineTo(x, y);
+          ctx.stroke();
+          prevX = x;
+          prevY = y;
+        } else {
+          drawing = false;
+        }
+      } else {
+        drawing = false;
+      }
+    });
+
+    const camera = new Camera(video, {
+      onFrame: async () => {
+        await hands.send({ image: video });
+      },
+      width: 640,
+      height: 480
+    });
+    camera.start();
+  </script>
+</body>
+</html>
