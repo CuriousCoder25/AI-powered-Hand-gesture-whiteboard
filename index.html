@@ -87,7 +87,7 @@
     });
 
     hands.onResults((results) => {
-      ctx.lineWidth = isErasing ? 20 : 4;
+      ctx.lineWidth = isErasing ? 100 : 4; // Increase line width for eraser
       ctx.strokeStyle = isErasing ? '#ffffff' : '#000000';
       ctx.lineCap = 'round';
 
