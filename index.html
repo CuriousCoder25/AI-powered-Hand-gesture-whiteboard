@@ -4,42 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MediaPipe Whiteboard</title>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-    }
-    #whiteboard {
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-    #input_video {
-      display: none;
-    }
-    #info {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: rgba(255,255,255,0.8);
-      padding: 10px;
-      border-radius: 8px;
-      z-index: 10;
-      font-family: sans-serif;
-    }
-    #eraserBtn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: #ffffffdd;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      padding: 8px 12px;
-      font-size: 16px;
-      cursor: pointer;
-      z-index: 10;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div id="info">✍️ Draw with your index finger</div>
@@ -50,88 +15,6 @@
   <!-- MediaPipe and Camera Utils -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
-
-  <script>
-    const video = document.getElementById('input_video');
-    const canvas = document.getElementById('whiteboard');
-    const ctx = canvas.getContext('2d');
-    const eraserBtn = document.getElementById('eraserBtn');
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    let drawing = false;
-    let prevX = 0, prevY = 0;
-    let smoothX = 0, smoothY = 0;
-    const SMOOTHING = 0.1; // Reduced smoothing factor for smoother movement
-    let isErasing = false;
-
-    eraserBtn.addEventListener('click', () => {
-      isErasing = !isErasing;
-      eraserBtn.textContent = isErasing ? 'Draw' : 'Eraser';
-    });
-
-    const hands = new Hands({
-      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
-    });
-
-    hands.setOptions({
-      maxNumHands: 1,
-      modelComplexity: 1,
-      minDetectionConfidence: 0.7,
-      minTrackingConfidence: 0.5
-    });
-
-    hands.onResults((results) => {
-      ctx.lineWidth = isErasing ? 80 : 4; // Increased eraser size from 40 to 80
-      ctx.strokeStyle = isErasing ? '#ffffff' : '#000000';
-      ctx.lineCap = 'round';
-
-      if (results.multiHandLandmarks.length > 0) {
-        const index = results.multiHandLandmarks[0][8];
-        let targetX = (1 - index.x) * canvas.width; // flip X
-        let targetY = index.y * canvas.height;
-
-        // Apply smoothing
-        smoothX = smoothX * (1 - SMOOTHING) + targetX * SMOOTHING;
-        smoothY = smoothY * (1 - SMOOTHING) + targetY * SMOOTHING;
-
-        // Draw pointer circle
-        ctx.beginPath();
-        ctx.arc(smoothX, smoothY, 5, 0, 2 * Math.PI); // Circle with radius 5
-        ctx.fillStyle = isErasing ? '#ff0000' : '#00ff00'; // Red for erasing, green for drawing
-        ctx.fill();
-
-        if (!drawing) {
-          drawing = true;
-          prevX = smoothX;
-          prevY = smoothY;
-        }
-
-        ctx.beginPath();
-        ctx.moveTo(prevX, prevY);
-        ctx.lineTo(smoothX, smoothY);
-        ctx.stroke();
-
-        prevX = smoothX;
-        prevY = smoothY;
-      } else {
-        drawing = false;
-      }
-    });
-
-    const camera = new Camera(video, {
-      onFrame: async () => {
-        await hands.send({ image: video });
-      },
-      width: 640,
-      height: 480
-    });
-    camera.start();
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
