@@ -27,7 +27,7 @@ Built using cutting-edge technologies like **TensorFlow.js** and **MediaPipe Han
 
 ---
 
-## 📂 Project Structure
+## 📂 Project Structure-
 
 Here’s a breakdown of the project structure:
 
