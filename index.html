@@ -67,7 +67,7 @@
     let drawing = false;
     let prevX = 0, prevY = 0;
     let smoothX = 0, smoothY = 0;
-    const SMOOTHING = 0.2;
+    const SMOOTHING = 0.1; // Reduced smoothing factor for smoother movement
     let isErasing = false;
 
     eraserBtn.addEventListener('click', () => {
@@ -87,7 +87,7 @@
     });
 
     hands.onResults((results) => {
-      ctx.lineWidth = isErasing ? 20 : 4;
+      ctx.lineWidth = isErasing ? 80 : 4; // Increased eraser size from 40 to 80
       ctx.strokeStyle = isErasing ? '#ffffff' : '#000000';
       ctx.lineCap = 'round';
 
@@ -99,6 +99,12 @@
         // Apply smoothing
         smoothX = smoothX * (1 - SMOOTHING) + targetX * SMOOTHING;
         smoothY = smoothY * (1 - SMOOTHING) + targetY * SMOOTHING;
+
+        // Draw pointer circle
+        ctx.beginPath();
+        ctx.arc(smoothX, smoothY, 5, 0, 2 * Math.PI); // Circle with radius 5
+        ctx.fillStyle = isErasing ? '#ff0000' : '#00ff00'; // Red for erasing, green for drawing
+        ctx.fill();
 
         if (!drawing) {
           drawing = true;
