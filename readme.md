@@ -1,39 +1,42 @@
-🎨 AI-powered Hand Gesture Whiteboard ✋
-🚀 Overview
-Welcome to the AI-powered Hand Gesture Whiteboard! This web-based application allows you to draw in the air using your index finger — no mouse or stylus required. It captures your hand movements in real-time and converts gestures into drawings on a digital canvas.
+# 🎨 AI-powered Hand Gesture Whiteboard ✋
 
-Built using cutting-edge technologies like TensorFlow.js and MediaPipe Hands, this app enables you to create drawings with the power of AI and hand gesture recognition.
+## 🚀 Overview
 
-🧠 Features
-✍️ Draw with your index finger – Control your drawing by simply moving your finger.
+Welcome to the **AI-powered Hand Gesture Whiteboard**! This web-based application allows you to **draw in the air using your index finger** — no mouse or stylus required. It captures your hand movements in real-time and converts gestures into drawings on a digital canvas.
 
-🧽 Toggle between Drawing and Erasing modes – Easily switch between drawing and erasing.
+Built using cutting-edge technologies like **TensorFlow.js** and **MediaPipe Hands**, this app enables you to create drawings with the power of AI and hand gesture recognition.
 
-🎥 Real-time hand tracking – Tracks your hand movements through the webcam in real-time.
+---
 
-🧊 Smooth drawing motion – The app features smooth stroke rendering with easing effects.
+## 🧠 Features
 
-💡 No installation required – Just open it in your browser and start drawing instantly!
+- ✍️ **Draw with your index finger** – Control your drawing by simply moving your finger.
+- 🧽 **Toggle between Drawing and Erasing modes** – Easily switch between drawing and erasing.
+- 🎥 **Real-time hand tracking** – Tracks your hand movements through the webcam in real-time.
+- 🧊 **Smooth drawing motion** – The app features smooth stroke rendering with easing effects.
+- 💡 **No installation required** – Just open it in your browser and start drawing instantly!
 
-🛠️ Tech Stack
-HTML, CSS, JavaScript: For the core functionality and layout.
+---
 
-TensorFlow.js: For real-time hand gesture recognition and tracking.
+## 🛠️ Tech Stack
 
-MediaPipe Hands: Provides hand landmark detection and tracking.
+- **HTML, CSS, JavaScript**: For the core functionality and layout.
+- **TensorFlow.js**: For real-time hand gesture recognition and tracking.
+- **MediaPipe Hands**: Provides hand landmark detection and tracking.
+- **Canvas API**: Renders strokes and manages the drawing surface.
 
-Canvas API: Renders strokes and manages the drawing surface.
+---
 
-📂 Project Structure
+## 📂 Project Structure
+
 Here’s a breakdown of the project structure:
 
-bash
-Copy
-Edit
+```bash
 📁 AI-powered-Hand-gesture-whiteboard/
 ├── index.html        # Main HTML layout
 ├── styles.css        # Simple UI styling
 └── script.js         # Logic for drawing & gesture recognition using MediaPipe
+
 📸 How It Works
 Launch the app: Open the app in your browser and allow webcam access.
 
