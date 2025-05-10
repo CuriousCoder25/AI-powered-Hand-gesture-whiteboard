@@ -1,6 +1,7 @@
 🎨 AI-powered Hand Gesture Whiteboard ✋
 🚀 Overview
-Welcome to the AI-powered Hand Gesture Whiteboard! This web-based application allows you to draw in the air using your index finger — no mouse or stylus required. It captures your hand movements in real-time and converts gestures into drawings on a digital canvas.
+Welcome to the AI-powered Hand Gesture Whiteboard! This web-based application allows you to draw in the air using your index finger — no mouse or stylus required. It captures your hand movements in real-time and converts 
+gestures into drawings on a digital canvas.
 
 Built using cutting-edge technologies like TensorFlow.js and MediaPipe Hands, this app enables you to create drawings with the power of AI and hand gesture recognition.
 
